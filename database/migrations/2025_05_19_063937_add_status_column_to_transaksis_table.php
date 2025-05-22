@@ -9,18 +9,17 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   public function up()
-{
-    Schema::table('transaksis', function (Blueprint $table) {
-        $table->string('status')->default('pending');
-    });
-}
+    public function up()
+    {
+        Schema::table('transaksis', function (Blueprint $table) {
+            $table->string('status')->default('pending');
+        });
+    }
 
-public function down()
-{
-    Schema::table('transaksis', function (Blueprint $table) {
-        $table->dropColumn('status');
-    });
-}
-
+    public function down()
+    {
+        Schema::table('transaksis', function (Blueprint $table) {
+            $table->dropColumn('status');
+        });
+    }
 };

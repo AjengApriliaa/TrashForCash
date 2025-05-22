@@ -18,6 +18,5 @@ class Transaksi extends Model
         'berat',
         'bukti_foto',
         'status',
-        'estimasi_koin',
     ];
 }
