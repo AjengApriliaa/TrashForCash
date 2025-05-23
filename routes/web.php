@@ -105,9 +105,11 @@ use App\Http\Controllers\TransaksiController;
 
 Route::middleware(['auth'])->group(function () {
     // Rute yang sudah ada
-    Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
-    Route::post('/transaksi', [TransaksiController::class, 'simpan'])->name('transaksi.simpan');
-    
+    Route::get('/Transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
+    Route::post('/Transaksi', [TransaksiController::class, 'simpan'])->name('transaksi.simpan');
+    Route::put('/Transaksi/{id}/cancel', [TransaksiController::class, 'cancel'])->name('transaksi.cancel');
+
+
     // Rute yang mungkin perlu ditambahkan
     Route::get('/buang-sampah', [TransaksiController::class, 'formAntar'])->name('buang.sampah');
     Route::get('/jemput-sampah', [TransaksiController::class, 'formJemput'])->name('jemput.sampah');

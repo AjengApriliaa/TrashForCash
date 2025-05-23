@@ -4,27 +4,36 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Transaksi;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class TransaksiController extends Controller
 {
     use \Illuminate\Foundation\Validation\ValidatesRequests;
-    
+
+    /**
+     * Tampilkan form layanan antar
+     */
     public function formAntar()
     {
-        return view('Buangsampah');
+        $transaksis = Transaksi::where('user_id', auth()->id())->get();
+        return view('Buangsampah', compact('transaksis'));   
     }
 
+    /**
+     * Tampilkan form layanan jemput
+     */
     public function formJemput()
     {
-        return view('Jemput');
+        $transaksis = Transaksi::where('user_id', auth()->id())->get();
+        return view('Jemput', compact('transaksis'));   
     }
 
+    /**
+     * Simpan transaksi dari form antar/jemput
+     */
     public function simpan(Request $request)
     {
-        // Validasi input berdasarkan form yang disubmit
         $request->validate([
             'layanan' => 'required|in:antar,jemput',
             'lokasi' => 'required|string',
@@ -33,25 +42,20 @@ class TransaksiController extends Controller
             'berat' => 'required|numeric|min:0',
         ]);
 
-        // Handle file upload based on layanan
         if ($request->layanan == 'antar') {
             $request->validate([
-                'bukti_foto' => 'required|image|max:2048', // Max 2MB
+                'bukti_foto' => 'required|image|max:2048',
             ]);
-            
             $path = $request->file('bukti_foto')->store('bukti_antar', 'public');
-        } else { // jemput
+        } else {
             $request->validate([
-                'foto' => 'required|image|max:2048', // Max 2MB
+                'foto' => 'required|image|max:2048',
             ]);
-            
             $path = $request->file('foto')->store('bukti_jemput', 'public');
         }
 
-        // Hitung koin yang didapat (2 koin per gram)
         $koin = $request->berat * 2;
 
-        // Buat transaksi baru
         $transaksi = Transaksi::create([
             'user_id' => Auth::id(),
             'layanan' => $request->layanan,
@@ -61,35 +65,57 @@ class TransaksiController extends Controller
             'berat' => $request->berat,
             'koin' => $koin,
             'foto_path' => $path,
-            'status' => 'pending', // Status awal
+            'status' => 'pending',
         ]);
 
-        // Redirect berdasarkan jenis layanan
-        $message = ($request->layanan == 'antar') ? 
-            'Permintaan pengantaran sampah berhasil dikirim.' : 
-            'Permintaan penjemputan sampah berhasil dikirim.';
-            
-        // Perbaikan di sini - menggunakan nama route yang benar
+        $message = ($request->layanan == 'antar') 
+            ? 'Permintaan pengantaran sampah berhasil dikirim.' 
+            : 'Permintaan penjemputan sampah berhasil dikirim.';
+
         return redirect()->route('transaksi.index')->with('success', $message);
     }
-    
+
+    /**
+     * Tampilkan transaksi aktif/pending
+     */
     public function index()
     {
         $transaksis = Transaksi::where('user_id', Auth::id())
-                              ->where('status', 'pending')
+                              ->whereIn('status', ['pending', 'processing'])
                               ->orderBy('created_at', 'desc')
                               ->get();
-                              
+
         return view('Transaksi', compact('transaksis'));
     }
-    
+
+    /**
+     * Tampilkan riwayat transaksi
+     */
     public function riwayat()
     {
         $transaksis = Transaksi::where('user_id', Auth::id())
                               ->whereIn('status', ['completed', 'cancelled'])
                               ->orderBy('created_at', 'desc')
                               ->get();
-                              
-        return view('Transaksi', compact('transaksis'));
+
+        return view('Riwayattransaksi', compact('transaksis'));
+    }
+
+    /**
+     * Batalkan transaksi
+     */
+    public function cancel($id)
+    {
+        $transaksi = Transaksi::where('id', $id)
+                            ->where('user_id', Auth::id())
+                            ->where('status', 'pending')
+                            ->firstOrFail();
+
+        $transaksi->status = 'cancelled';
+        $transaksi->save();
+
+        return redirect()->route('transaksi.index')
+                       ->with('success', 'Transaksi berhasil dibatalkan.');
     }
 }
+

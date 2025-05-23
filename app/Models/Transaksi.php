@@ -17,5 +17,6 @@ class Transaksi extends Model
         'longitude',
         'berat',
         'bukti_foto',
+        'status',
     ];
 }
