@@ -309,5 +309,7 @@
             @endforeach
         });
     </script>
+    @include('Footer')
 </body>
+
 </html>

@@ -57,6 +57,21 @@ Route::get('Withdraw', function () {
 Route::get('Transaksi', function () {
     return view('Transaksi'); 
 }); 
+Route::get('Loginadmin', function () {
+    return view('Loginadmin'); 
+}); 
+Route::get('Dashboardadmin', function () {
+    return view('Dashboardadmin'); 
+}); 
+Route::get('Fakturtransaksi', function () {
+    return view('Fakturtransaksi'); 
+}); 
+Route::get('Riwayattransaksiadmin', function () {
+    return view('Riwayattransaksiadmin'); 
+}); 
+Route::get('Datauser', function () {
+    return view('Datauser'); 
+}); 
 
 use App\Http\Controllers\AuthController;
 
@@ -108,10 +123,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/Transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
     Route::post('/Transaksi', [TransaksiController::class, 'simpan'])->name('transaksi.simpan');
     Route::put('/Transaksi/{id}/cancel', [TransaksiController::class, 'cancel'])->name('transaksi.cancel');
-
-
     // Rute yang mungkin perlu ditambahkan
     Route::get('/buang-sampah', [TransaksiController::class, 'formAntar'])->name('buang.sampah');
     Route::get('/jemput-sampah', [TransaksiController::class, 'formJemput'])->name('jemput.sampah');
     Route::get('/transaksi/riwayat', [TransaksiController::class, 'riwayat'])->name('transaksi.riwayat');
 });
+
+use App\Http\Controllers\AdminLoginController;
+
+Route::get('/admin/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login.form');
+Route::post('/admin/login', [AdminLoginController::class, 'login'])->name('admin.login');
