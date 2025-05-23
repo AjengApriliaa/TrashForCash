@@ -336,7 +336,7 @@
 
             .transaction-card {
                 padding: 1.25rem;
-            }
+            } 
         }
     </style>
 </head>
