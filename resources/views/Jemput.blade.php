@@ -144,6 +144,7 @@
                     <a class="nav-link" href="{{ url('/Riwayattransaksi') }}">Riwayat Transaksi</a>
                     <a class="nav-link" href="{{ url('/Koin') }}">Koinku</a>
                     <a class="nav-link" href="{{ url('/Riwayatpenukaran') }}">Riwayat Penukaran Koinku</a>
+                    <a class="nav-link" href="{{ url('/Login') }}">Logout</a>
                 </nav>
             </div>
 

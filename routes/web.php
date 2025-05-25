@@ -26,6 +26,7 @@ use App\Http\Controllers\StrukTransaksiController;
 Route::get('/', fn() => view('Home'));
 Route::get('/Login', fn() => view('Login'));
 Route::get('/Signup', fn() => view('Signup'));
+Route::get('/Logout', fn() => view('Login'));
 
 // =====================
 // Halaman Utama User (Setelah Login)

@@ -155,6 +155,7 @@
                     <a class="nav-link" href="Riwayattransaksi">Riwayat Transaksi</a>
                     <a class="nav-link active" href="Koin">Koinku</a>
                     <a class="nav-link" href="Riwayatpenukaran">Riwayat Penukaran Koinku</a>
+                    <a class="nav-link" href="Login">Logout</a>
                 </nav>
             </div>
 
