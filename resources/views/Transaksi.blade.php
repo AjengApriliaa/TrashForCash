@@ -234,7 +234,7 @@
                         profil</a>
                 </div>
                 <nav class="nav flex-column">
-                    <a class="nav-link" href="Dashboard">Dashboard</a>
+                    <a class="nav-link" href="dashboard">Dashboard</a>
                     <a class="nav-link" href="Buangsampah">Buang Sampah</a>
                     <a class="nav-link active" href="Transaksi">Transaksi</a>
                     <a class="nav-link" href="Riwayattransaksi">Riwayat Transaksi</a>

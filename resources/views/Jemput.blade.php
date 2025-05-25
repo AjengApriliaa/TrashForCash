@@ -137,7 +137,7 @@
                         profil</a>
                 </div>
                 <nav class="nav flex-column">
-                    <a class="nav-link" href="{{ url('/Dashboard') }}">Dashboard</a>
+                    <a class="nav-link" href="{{ url('/dashboard') }}">Dashboard</a>
                     <a class="nav-link" href="{{ url('/Buangsampah') }}">Buang Sampah</a>
                     <a class="nav-link active" href="{{ url('/Jemput') }}">Jemput Sampah</a>
                     <a class="nav-link" href="{{ url('/Transaksi') }}">Transaksi</a>
