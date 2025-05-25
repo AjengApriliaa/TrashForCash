@@ -184,8 +184,6 @@
                     <label class="form-label">Jenis Kelamin</label><br>
                     <input type="radio" name="gender" value="Laki-laki" {{ $user->gender === 'Laki-laki' ? 'checked' : '' }}> Laki-laki
                     <input type="radio" name="gender" value="Perempuan" {{ $user->gender === 'Perempuan' ? 'checked' : '' }}> Perempuan
-                    <input type="radio" name="gender" value="Lainnya" {{ $user->gender === 'Lainnya' ? 'checked' : '' }}>
-                    Lainnya
                 </div>
 
                 <div class="mb-3">

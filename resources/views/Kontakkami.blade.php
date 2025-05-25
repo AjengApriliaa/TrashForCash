@@ -207,14 +207,15 @@
 <body>
 
     <!-- Header atas -->
-    <div class="header">
+    <!-- Header -->
+    <div class="header d-flex justify-content-between align-items-center">
         <div>
-            <a href="#">call center</a>
-            <a href="#">kontak kami</a>
+            <a href="Kontakkami">call center</a>
+            <a href="Kontakkami">kontak kami</a>
         </div>
         <div>
-            <a href="#">Notifikasi</a>
-            <a href="#">Bantuan</a>
+            <a href="Notifikasi">Notifikasi</a>
+            <a href="Bantuan">Bantuan</a>
             <a href="#">Bahasa Indonesia</a>
         </div>
     </div>
@@ -265,4 +266,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @include('Footer')
 </body>
+
 </html>

@@ -62,7 +62,7 @@
         </div>
         <div class="login-box">
             <div class="text-center mb-3">
-                <img src="{{ asset('asset/tfclogodark2.svg') }}" alt="Logo" style="width: 120px;">
+                <img src="{{ asset('asset/tfclogodark2.svg') }}" alt="Logo" style="width: 180px;">
                 <h4 class="mt-2">LOG IN ADMIN</h4>
                 <small>Masuk sebagai Admin</small>
             </div>

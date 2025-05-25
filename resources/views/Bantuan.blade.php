@@ -97,7 +97,7 @@
     <!-- Header -->
     <div class="header d-flex justify-content-between align-items-center">
         <div>
-            <a href="Callcenter">call center</a>
+            <a href="Kontakkami">call center</a>
             <a href="Kontakkami">kontak kami</a>
         </div>
         <div>

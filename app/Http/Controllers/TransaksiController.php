@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
+
 class TransaksiController extends Controller
 {
     // Menampilkan daftar transaksi user
@@ -84,6 +85,8 @@ class TransaksiController extends Controller
                 'lokasi_antar' => $lokasiAntar,
             ]);
 
+
+
             // Redirect dengan pesan sukses
             if ($validated['layanan'] === 'antar') {
                 return redirect()->route('buang.sampah')->with('success', 'Transaksi antar sampah berhasil dibuat!');
@@ -138,4 +141,6 @@ class TransaksiController extends Controller
 
         return back()->with('success', 'Transaksi berhasil dibatalkan!');
     }
+    
+    
 }
