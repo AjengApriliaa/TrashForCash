@@ -134,18 +134,6 @@
 </head>
 
 <body>
-    <!-- Header -->
-    <div class="header d-flex justify-content-between align-items-center">
-        <div>
-            <a href="Kontakkami" class="text-white text-decoration-none me-3">call center</a>
-            <a href="Kontakkami" class="text-white text-decoration-none">kontak kami</a>
-        </div>
-        <div>
-            <a href="Notifikasi" class="text-white text-decoration-none me-3">Notifikasi</a>
-            <a href="Bantuan" class="text-white text-decoration-none me-3">Bantuan</a>
-            <a href="#" class="text-white text-decoration-none">Bahasa Indonesia</a>
-        </div>
-    </div>
 
     <!-- Logo & Search -->
     <div class="logo-section d-flex justify-content-between align-items-center">
@@ -170,46 +158,60 @@
                 </div>
 
                 <nav class="nav flex-column">
-                    <a class="nav-link active" href="Dashboardadmin">Dashboard</a>
-                    <a class="nav-link" href="Fakturtransaksi">Faktur Transaksi</a>
-                    <a class="nav-link" href="Riwayattransaksiadmin">Riwayat Transaksi</a>
-                    <a class="nav-link" href="Datauser">Kelola User</a>
+                    <a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a>
+                    <a class="nav-link" href="{{ route('admin.transaksi.index') }}">Faktur Transaksi</a>
+                    <a class="nav-link active" href="{{ route('admin.transaksi.riwayat') }}">Riwayat Transaksi</a>
+                    <a class="nav-link" href="{{ route('admin.kelolauser') }}">Kelola User</a>
+
                 </nav>
             </div>
 
             <!-- Main Content -->
             <div class="col-md-9 main-content">
-                <h2>Dasbord</h2>
-
-                <div class="card-container">
-                    <div class="card">
-                        <p>Jumlah Pengguna Keseluruhan</p>
-                        <h3>531</h3>
-                    </div>
-                    <div class="card">
-                        <p>Pengguna aktif</p>
-                        <h3>293</h3>
-                    </div>
-                    <div class="card">
-                        <p>Riwayat transaksi</p>
-                        <h3>50</h3>
-                    </div>
-                </div>
+                <h2 class="text-center mt4 ">Dashboard</h2>
 
                 <div class="about">
-                    <h3>Tentang Aplikasi</h3>
-                    <p>
-                        Trash Forcash adalah platform untuk membantu Anda mengelola sampah secara berkelanjutan dan
-                        menguntungkan. Anda dapat menukar sampah dengan koin untuk diuangkan.
-                    </p>
-                    <p>
-                        Bersama Trash Forcash, mari jaga lingkungan sambil mendapatkan manfaat.
-                    </p>
+                    <div class="card-container">
+                        <div class="card">
+                            <p>Jumlah Pengguna Keseluruhan</p>
+                            <h3>{{ $jumlahPengguna }}</h3>
+                        </div>
+                        <div class="card">
+                            <p>Pengguna Aktif</p>
+                            <h3>{{ $jumlahPenggunaAktif }}</h3>
+                        </div>
+                        <div class="card">
+                            <p>Riwayat Transaksi</p>
+                            <h3>{{ $jumlahTransaksi }}</h3>
+                        </div>
+                    </div>
+
+
+
+                    <div class="about">
+                        <h3 class="text-center">Tentang Aplikasi</h3>
+                        <p>
+                            Trash Forcash adalah platform yang bertujuan untuk membantu Anda mengelola sampah dengan
+                            cara
+                            yang lebih berkelanjutan dan menguntungkan. Dengan Trash Forcash, Anda dapat dengan mudah
+                            mendaur ulang sampah Anda tanpa ribet. Kami menyediakan fasilitas untuk memasukkan jenis dan
+                            berat sampah Anda, dan dalam sekejap, Anda akan mendapatkan insentif berupa koin yang dapat
+                            ditukar dengan hadiah atau uang tunai.
+
+                            Kami percaya bahwa berkontribusi pada lingkungan yang lebih baik haruslah menjadi pengalaman
+                            yang mudah dan bermanfaat bagi semua orang. Dengan Trash Forcash, Anda tidak hanya membantu
+                            mengurangi limbah yang mencemari lingkungan, tetapi juga memiliki kesempatan untuk
+                            mendapatkan
+                            manfaat dari upaya Anda.
+
+                            Bergabunglah dengan komunitas Trash Forcash sekarang dan mari bersama-sama menjadikan dunia
+                            lebih bersih, lebih hijau, dan lebih berkelanjutan.
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-    @include('Footer')
+
+            @include('Footer')
 </body>
 
 </html>

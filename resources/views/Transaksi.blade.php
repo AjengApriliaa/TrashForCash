@@ -5,13 +5,12 @@
     <meta charset="UTF-8">
     <title>Transaksi - TrashForCash</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- js -->
+    <!-- Leaflet JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <!-- Bootstrap CSS -->
+    <!-- Bootstrap CSS & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body {
@@ -91,21 +90,91 @@
             color: white;
         }
 
+        .transaction-card {
+            background-color: #244b36;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            border: none;
+        }
+
         .transaction-detail-item {
             margin-bottom: 0.75rem;
             display: flex;
             align-items: baseline;
         }
 
-        .transaction-detail-item i {
-            color: var(--accent-color);
-            margin-right: 0.75rem;
-            font-size: 0.9rem;
-        }
-
         .transaction-detail-label {
             font-weight: 600;
             margin-right: 0.5rem;
+            min-width: 130px;
+        }
+
+        .transaction-detail-value {
+            flex: 1;
+        }
+
+        .status-badge {
+            background-color: #f8f9fa;
+            color: #000;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-processing {
+            background-color: #cff4fc;
+            color: #055160;
+        }
+
+        .status-completed {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .status-cancelled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #fff;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .btn-chat {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-chat:hover {
+            background-color: #5a6268;
+            color: white;
+        }
+
+        footer {
+            background-color: #244b36;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
         }
 
         /* Responsive adjustments */
@@ -121,6 +190,10 @@
 
             .transaction-card {
                 padding: 1.25rem;
+            }
+
+            .transaction-detail-label {
+                min-width: 110px;
             }
         }
     </style>
@@ -151,6 +224,7 @@
         </form>
     </div>
 
+    <!-- MAIN CONTENT -->
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-3 sidebar">
@@ -161,155 +235,205 @@
                 </div>
                 <nav class="nav flex-column">
                     <a class="nav-link" href="Dashboard">Dashboard</a>
-                    <a class="nav-link active" href="Buangsampah">Buang Sampah</a>
-                    <a class="nav-link" href="Transaksi">Transaksi</a>
+                    <a class="nav-link" href="Buangsampah">Buang Sampah</a>
+                    <a class="nav-link active" href="Transaksi">Transaksi</a>
                     <a class="nav-link" href="Riwayattransaksi">Riwayat Transaksi</a>
                     <a class="nav-link" href="Koin">Koinku</a>
                     <a class="nav-link" href="Riwayatpenukaran">Riwayat Penukaran Koinku</a>
                 </nav>
             </div>
-
-            <!-- Main Content -->
             <div class="col-md-9 content">
-                <div class="content-header">
-                    <i class="bi bi-arrow-left-right"></i>
-                    <span>Transaksi Sampah</span>
-                </div>
+                <div class="content-header text-center">Transaksi</div>
 
+                <!-- Alert Messages -->
                 @if(session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="bi bi-check-circle-fill me-2"></i>
                         {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
 
-                @if(isset($transaksis) && $transaksis->isEmpty())
-                    <div class="empty-state">
-                        <i class="bi bi-basket"></i>
-                        <h4>Belum Ada Transaksi</h4>
-                        <p>Anda belum memiliki transaksi sampah yang sedang berlangsung.</p>
-                        <a href="{{ url('/Buangsampah') }}" class="btn btn-primary-custom">
-                            <i class="bi bi-plus-lg me-2"></i>Buang Sampah Sekarang
-                        </a>
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                @else
-                    <div class="row">
-                        @foreach($transaksis as $transaksi)
-                            <div class="col-md-6 mb-4">
-                                <div class="transaction-card">
-                                    <div class="d-flex justify-content-between align-items-start mb-3">
-                                        <div>
-                                            <h5 class="mb-1">
-                                                @if($transaksi->layanan == 'antar')
-                                                    <i class="bi bi-box-arrow-in-right text-success me-2"></i>Antar Sampah
-                                                @else
-                                                    <i class="bi bi-truck text-primary me-2"></i>Jemput Sampah
-                                                @endif
-                                            </h5>
-                                            <div class="transaction-type">
-                                                <i class="bi bi-calendar3"></i>
-                                                {{ \Carbon\Carbon::parse($transaksi->created_at)->format('d M Y, H:i') }}
-                                            </div>
-                                        </div>
-                                        <span class="transaction-status status-{{ $transaksi->status }}">
-                                            @if($transaksi->status == 'pending')
-                                                <i class="bi bi-hourglass-split me-1"></i>Menunggu
-                                            @elseif($transaksi->status == 'processing')
-                                                <i class="bi bi-arrow-repeat me-1"></i>Diproses
-                                            @elseif($transaksi->status == 'completed')
-                                                <i class="bi bi-check-circle me-1"></i>Selesai
-                                            @elseif($transaksi->status == 'cancelled')
-                                                <i class="bi bi-x-circle me-1"></i>Dibatalkan
-                                            @endif
-                                        </span>
-                                    </div>
+                @endif
 
-                                    <div class="row mb-3">
-                                        <div class="col-md-5">
-                                            @php
-                                                $imagePath = $transaksi->foto_path
-                                                    ? asset('storage/' . $transaksi->foto_path)
-                                                    : asset('images/default.png');
-                                            @endphp
-                                            <img src="{{ $imagePath }}" alt="Foto Sampah" class="transaction-image">
-                                        </div>
-                                        <div class="col-md-7">
-                                            <div class="transaction-detail-item">
-                                                <i class="bi bi-geo-alt-fill"></i>
-                                                <div>
-                                                    <span class="transaction-detail-label">Lokasi:</span>
-                                                    <span>{{ $transaksi->lokasi }}</span>
-                                                </div>
-                                            </div>
-                                            <div class="transaction-detail-item">
-                                                <i class="bi bi-speedometer"></i>
-                                                <div>
-                                                    <span class="transaction-detail-label">Berat:</span>
-                                                    <span>{{ $transaksi->berat }} gram</span>
-                                                </div>
-                                            </div>
-                                            <div class="transaction-detail-item">
-                                                <i class="bi bi-coin"></i>
-                                                <div>
-                                                    <span class="transaction-detail-label">Koin:</span>
-                                                    <span class="coin-badge">
-                                                        <i class="bi bi-coin"></i>{{ $transaksi->koin }}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                <!-- Transaksi List -->
+                @forelse($transaksis as $transaksi)
+                    <div class="transaction-card">
+                        <!-- Header Transaksi -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="card-title mb-0">Transaksi</h5>
 
-                                    <div class="transaction-map" id="map-{{ $transaksi->id }}"></div>
+                        </div>
 
-                                    @if($transaksi->status == 'pending')
-                                        <div class="mt-3 text-end">
-                                            <form action="{{ route('transaksi.cancel', $transaksi->id) }}" method="POST"
-                                                class="d-inline">
-                                                @csrf
-                                                @method('PUT')
-                                                <button type="submit" class="btn btn-cancel"
-                                                    onclick="return confirm('Apakah Anda yakin ingin membatalkan transaksi ini?')">
-                                                    <i class="bi bi-x-circle me-1"></i>Batalkan
-                                                </button>
-                                            </form>
-                                        </div>
+                        <!-- Detail Transaksi -->
+                        <div class="transaction-detail-item">
+                            <span class="transaction-detail-label">Tipe Transaksi</span>
+                            <span class="transaction-detail-value">: {{ ucfirst($transaksi->layanan) }}</span>
+                        </div>
+
+                        @if($transaksi->layanan === 'antar' && $transaksi->lokasi_antar)
+                            <div class="transaction-detail-item">
+                                <span class="transaction-detail-label">Lokasi Antar</span>
+                                <span class="transaction-detail-value">: {{ $transaksi->lokasi_antar }}</span>
+                            </div>
+                        @endif
+
+                        <div class="transaction-detail-item">
+                            <span class="transaction-detail-label">Nama</span>
+                            <span class="transaction-detail-value">: {{ $transaksi->user->name }}</span>
+                        </div>
+
+                        <div class="transaction-detail-item">
+                            <span class="transaction-detail-label">Alamat</span>
+                            <span class="transaction-detail-value">: {{ $transaksi->alamat }}</span>
+                        </div>
+
+                        <div class="transaction-detail-item">
+                            <span class="transaction-detail-label">Estimasi Berat</span>
+                            <span class="transaction-detail-value">: {{ number_format($transaksi->berat, 0) }} Gram</span>
+                        </div>
+
+                        <div class="transaction-detail-item">
+                            <span class="transaction-detail-label">Estimasi Koin</span>
+                            <span class="transaction-detail-value">: {{ number_format($transaksi->estimasi_koin, 0) }}
+                                koin</span>
+                        </div>
+
+                        <div class="transaction-detail-item">
+                            <span class="transaction-detail-label">Status</span>
+                            <span class="transaction-detail-value">:
+                                <span class="status-badge status-{{ $transaksi->status }}">
+                                    {{ $transaksi->status_indonesia }}
+                                </span>
+                            </span>
+                        </div>
+
+                        @if($transaksi->tanggal)
+                            <div class="transaction-detail-item">
+                                <span class="transaction-detail-label">Tanggal</span>
+                                <span class="transaction-detail-value">: {{ $transaksi->tanggal_format }}</span>
+                            </div>
+                        @endif
+
+                        @if($transaksi->lokasi)
+                            <div class="transaction-detail-item">
+                                <span class="transaction-detail-label">Lokasi Detail</span>
+                                <span class="transaction-detail-value">: {{ $transaksi->lokasi }}</span>
+                            </div>
+                        @endif
+
+                        <!-- Action Buttons -->
+                        @if($transaksi->status === 'pending')
+                            <div class="mt-3 pt-3 border-top border-secondary">
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-light btn-sm"
+                                        onclick="cancelTransaction({{ $transaksi->id }})">
+                                        <i class="bi bi-x-circle"></i> Batalkan
+                                    </button>
+                                    @if($transaksi->bukti_foto)
+                                        <button class="btn btn-outline-light btn-sm"
+                                            onclick="viewPhoto('{{ asset('storage/' . $transaksi->bukti_foto) }}')">
+                                            <i class="bi bi-image"></i> Lihat Foto
+                                        </button>
                                     @endif
                                 </div>
                             </div>
-                        @endforeach
+                        @endif
                     </div>
-                @endif
+                @empty
+                    <div class="content-box">
+                        <div class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <h4>Belum ada transaksi</h4>
+                            <p class="text-light">Anda belum memiliki transaksi sampah. Mulai dengan membuat transaksi baru.
+                            </p>
+                            <div class="mt-3">
+                                <a href="{{ url('/Buangsampah') }}" class="btn btn-light me-2">
+                                    <i class="bi bi-plus-circle"></i> Antar Sampah
+                                </a>
+                                <a href="{{ url('/Jemput') }}" class="btn btn-outline-light">
+                                    <i class="bi bi-truck"></i> Jemput Sampah
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endforelse
             </div>
         </div>
     </div>
 
+    <!-- Modal untuk melihat foto -->
+    <div class="modal fade" id="photoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Bukti Foto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="photoPreview" src="" class="img-fluid" style="max-height: 500px;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER Full Width -->
+    <footer class="w-100">
+        @include('Footer')
+    </footer>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Leaflet Maps Init -->
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            @foreach($transaksis as $transaksi)
-                var map{{ $transaksi->id }} = L.map("map-{{ $transaksi->id }}").setView(
-                    [{{ $transaksi->latitude }}, {{ $transaksi->longitude }}],
-                    15
-                );
+        function openChat() {
+            // Implementasi chat picker
+            alert('Fitur chat picker akan segera tersedia!');
+        }
 
-                L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                    maxZoom: 18
-                }).addTo(map{{ $transaksi->id }});
+        function viewPhoto(photoUrl) {
+            document.getElementById('photoPreview').src = photoUrl;
+            new bootstrap.Modal(document.getElementById('photoModal')).show();
+        }
 
-                L.marker([{{ $transaksi->latitude }}, {{ $transaksi->longitude }}])
-                    .addTo(map{{ $transaksi->id }})
-                    .bindPopup("{{ $transaksi->lokasi }}")
-                    .openPopup();
-            @endforeach
-        });
+        function cancelTransaction(id) {
+            if (confirm('Apakah Anda yakin ingin membatalkan transaksi ini?')) {
+                // Submit form untuk cancel
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/transaksi/${id}/cancel`;
+
+                const csrfToken = document.createElement('input');
+                csrfToken.type = 'hidden';
+                csrfToken.name = '_token';
+                csrfToken.value = '{{ csrf_token() }}';
+
+                const methodField = document.createElement('input');
+                methodField.type = 'hidden';
+                methodField.name = '_method';
+                methodField.value = 'PATCH';
+
+                form.appendChild(csrfToken);
+                form.appendChild(methodField);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        // Auto hide alerts after 5 seconds
+        setTimeout(function () {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function (alert) {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
     </script>
-    @include('Footer')
+
 </body>
 
 </html>

@@ -183,7 +183,6 @@
                             <label>Jenis Kelamin</label><br>
                             <input type="radio" name="jenis_kelamin" value="Laki-Laki" {{ old('jenis_kelamin', $user->jenis_kelamin) == 'Laki-Laki' ? 'checked' : '' }}> Laki-Laki
                             <input type="radio" name="jenis_kelamin" value="Perempuan" {{ old('jenis_kelamin', $user->jenis_kelamin) == 'Perempuan' ? 'checked' : '' }}> Perempuan
-                            <input type="radio" name="jenis_kelamin" value="Lainnya" {{ old('jenis_kelamin', $user->jenis_kelamin) == 'Lainnya' ? 'checked' : '' }}> Lainnya
                         </div>
 
                         <div class="mb-3">

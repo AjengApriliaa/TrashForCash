@@ -90,6 +90,10 @@
             border-radius: 0.5rem;
             color: white;
         }
+
+        .alert {
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 
@@ -139,6 +143,27 @@
             <div class="col-md-9 content">
                 <div class="content-header text-center">Buang Sampah</div>
                 <div class="content-box">
+
+                    <!-- Alert Messages -->
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
+
+                    @if($errors->any())
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Terjadi kesalahan:</strong>
+                            <ul class="mb-0">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
+
                     <!-- Tabs Antar / Jemput -->
                     <ul class="nav nav-tabs mb-4 justify-content-center">
                         <li class="nav-item" role="presentation">
@@ -157,15 +182,15 @@
                     <div class="tab-content" id="buangSampahTabContent">
                         <div class="tab-pane fade show active" id="antar" role="tabpanel">
                             <!-- Form Buang Sampah -->
-                            <form action="{{ route('transaksi.simpan') }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('transaksi.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" name="layanan" value="antar">
 
                                 <!-- Lokasi -->
                                 <div class="mb-3">
-                                    <label for="lokasi" class="form-label">Detail Lokasi</label>
+                                    <label for="lokasi" class="form-label">Detail Lokasi Antar</label>
                                     <input type="text" class="form-control @error('lokasi') is-invalid @enderror"
-                                        id="lokasi" name="lokasi" placeholder="Masukkan lokasi..."
+                                        id="lokasi" name="lokasi" placeholder="Masukkan lokasi tujuan pengantaran..."
                                         value="{{ old('lokasi') }}" required>
                                     @error('lokasi')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -180,16 +205,20 @@
                                 </div>
 
                                 <!-- Estimasi Berat -->
-                                <div class="mb-3 d-flex align-items-center justify-content-between">
-                                    <div class="d-flex align-items-center">
-                                        <input type="number" id="berat" name="berat"
-                                            class="form-control me-2 @error('berat') is-invalid @enderror"
-                                            value="{{ old('berat', 0) }}" min="0" required style="width: 100px;">
-                                        <span>gr</span>
+                                <div class="mb-3">
+                                    <label for="berat" class="form-label">Estimasi Berat Sampah</label>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center">
+                                            <input type="number" id="berat" name="berat"
+                                                class="form-control me-2 @error('berat') is-invalid @enderror"
+                                                value="{{ old('berat', 1) }}" min="1" step="1" required
+                                                style="width: 120px;">
+                                            <span>gram</span>
+                                        </div>
+                                        <span id="coin-estimate" class="badge bg-success rounded-pill px-3 py-2">2 koin
+                                            <small class="d-block">Estimasi</small>
+                                        </span>
                                     </div>
-                                    <span id="coin-estimate" class="badge bg-success rounded-pill px-3 py-2">0 coin
-                                        <small class="d-block">Estimasi</small>
-                                    </span>
                                     @error('berat')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
@@ -200,6 +229,7 @@
                                     <label class="form-label">Upload Bukti Pengantaran</label>
                                     <input type="file" class="form-control @error('bukti_foto') is-invalid @enderror"
                                         name="bukti_foto" accept="image/*" required>
+                                    <small class="form-text text-light">Format: JPG, JPEG, PNG. Maksimal 2MB</small>
                                     @error('bukti_foto')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -207,7 +237,9 @@
 
                                 <!-- Tombol Kirim -->
                                 <div class="text-end">
-                                    <button type="submit" class="btn btn-dark px-4">Kirim</button>
+                                    <button type="submit" class="btn btn-light px-4">
+                                        <i class="bi bi-send"></i> Kirim Transaksi
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -215,22 +247,36 @@
                 </div>
             </div>
         </div>
-        @include('footer')
+    </div>
 
-</body>
-<script>
-    var map = L.map('map').setView([-5.3971, 105.2668], 13); // Default ke Bandar Lampung
+    @include('footer')
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    var marker;
+    <!-- Map Script -->
+    <script>
+        var map = L.map('map').setView([-5.3971, 105.2668], 13); // Default ke Bandar Lampung
 
-    // Saat input berubah, cari lokasi
-    document.getElementById('lokasi').addEventListener('change', function () {
-        var lokasi = this.value;
-        if (lokasi.length > 3) {
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        var marker;
+
+        // Saat input berubah, cari lokasi
+        document.getElementById('lokasi').addEventListener('input', function () {
+            var lokasi = this.value;
+            if (lokasi.length > 3) {
+                // Debounce untuk menghindari terlalu banyak request
+                clearTimeout(this.searchTimeout);
+                this.searchTimeout = setTimeout(function () {
+                    searchLocation(lokasi);
+                }, 500);
+            }
+        });
+
+        function searchLocation(lokasi) {
             axios.get('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(lokasi))
                 .then(function (response) {
                     if (response.data.length > 0) {
@@ -257,17 +303,53 @@
                     console.error('Gagal mencari lokasi:', error);
                 });
         }
-    });
-</script>
-<script>
-    const beratInput = document.getElementById('berat');
-    const coinDisplay = document.getElementById('coin-estimate');
 
-    beratInput.addEventListener('input', function () {
-        const berat = parseInt(beratInput.value) || 0;
-        const koin = berat * 2;
-        coinDisplay.innerHTML = `${koin} coin <small class="d-block">Estimasi</small>`;
-    });
-</script>
+        // Klik pada peta untuk memilih lokasi
+        map.on('click', function (e) {
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
+
+            // Tambahkan marker
+            if (marker) {
+                map.removeLayer(marker);
+            }
+            marker = L.marker([lat, lng]).addTo(map);
+
+            // Simpan koordinat
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
+
+            // Reverse geocoding untuk mendapatkan alamat
+            axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                .then(function (response) {
+                    if (response.data && response.data.display_name) {
+                        document.getElementById('lokasi').value = response.data.display_name;
+                        marker.bindPopup(response.data.display_name).openPopup();
+                    }
+                })
+                .catch(function (error) {
+                    console.error('Gagal mendapatkan alamat:', error);
+                });
+        });
+    </script>
+
+    <!-- Coin Calculation Script -->
+    <script>
+        const beratInput = document.getElementById('berat');
+        const coinDisplay = document.getElementById('coin-estimate');
+
+        function updateCoinEstimate() {
+            const berat = parseInt(beratInput.value) || 0;
+            const koin = berat * 2; // 1 gram = 2 koin
+            coinDisplay.innerHTML = `${koin} koin <small class="d-block">Estimasi</small>`;
+        }
+
+        beratInput.addEventListener('input', updateCoinEstimate);
+
+        // Set initial value
+        updateCoinEstimate();
+    </script>
+
+</body>
 
 </html>

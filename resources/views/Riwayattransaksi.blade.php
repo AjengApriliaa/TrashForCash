@@ -127,10 +127,10 @@
                         profil</a>
                 </div>
                 <nav class="nav flex-column">
-                    <a class="nav-link active" href="Dashboard">Dashboard</a>
+                    <a class="nav-link" href="Dashboard">Dashboard</a>
                     <a class="nav-link" href="Buangsampah">Buang Sampah</a>
                     <a class="nav-link" href="Transaksi">Transaksi</a>
-                    <a class="nav-link" href="Riwayattransaksi">Riwayat Transaksi</a>
+                    <a class="nav-link active" href="Riwayattransaksi">Riwayat Transaksi</a>
                     <a class="nav-link" href="Koin">Koinku</a>
                     <a class="nav-link" href="Riwayatpenukaran">Riwayat Penukaran Koinku</a>
                 </nav>
@@ -145,34 +145,43 @@
                     </div>
                 </div>
 
-                <!-- List Riwayat -->
-                <div class="card border-0" style="background-color: #1f3d2b; color: white; border-radius: 15px;">
-                    <div class="card-body px-4">
-                        <div class="d-flex justify-content-between border-bottom py-2">
-                            <div>
-                                <strong>Antar</strong><br>
-                                <small>09-10-2024 • 10:33</small>
-                            </div>
-                            <div class="text-end">
-                                <span class="badge bg-success">Sukses</span>
-                            </div>
-                        </div>
+                <div class="container my-4">
+                    <h4 class="mb-3 text-white">Riwayat Transaksi</h4>
 
-                        <div class="d-flex justify-content-between border-bottom py-2 mt-2">
-                            <div>
-                                <strong>Jemput</strong><br>
-                                <small>09-10-2024 • 10:35</small ll>
-                            </div>
-                            <div class="text-end">
-                                <span class="badge bg-success">Sukses</span>
+                    @if(session('success'))
+                        <div class="alert alert-success">{{ session('success') }}</div>
+                    @endif
+
+                    @if($transaksis->isEmpty())
+                        <div class="alert alert-info">Belum ada riwayat transaksi.</div>
+                    @else
+                        <!-- List Riwayat -->
+                        <div class="card border-0" style="background-color: #1f3d2b; color: white; border-radius: 15px;">
+                            <div class="card-body px-4">
+                                @foreach($transaksis as $transaksi)
+                                    <div class="d-flex justify-content-between border-bottom py-2">
+                                        <div>
+                                            <strong>{{ ucfirst($transaksi->layanan) }}</strong><br>
+                                            <small>{{ \Carbon\Carbon::parse($transaksi->created_at)->format('d-m-Y • H:i') }}</small>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge 
+                                                    @if($transaksi->status == 'completed') bg-success 
+                                                    @elseif($transaksi->status == 'cancelled') bg-danger 
+                                                    @elseif($transaksi->status == 'processing') bg-primary 
+                                                    @else bg-warning text-dark @endif">
+                                                {{ ucfirst($transaksi->status == 'completed' ? 'Sukses' : ($transaksi->status == 'cancelled' ? 'Dibatalkan' : $transaksi->status)) }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
             </div>
 
-        </div>
-        @include('Footer')
+            @include('Footer')
 </body>
 
 </html>

@@ -6,34 +6,27 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateTransaksisTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
+    public function up(): void
     {
         Schema::create('transaksis', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->string('layanan'); // antar / jemput
-            $table->string('lokasi');  // lokasi teks
-            $table->decimal('latitude', 10, 7)->nullable();   // contoh: -6.1234567
-            $table->decimal('longitude', 10, 7)->nullable();  // contoh: 106.1234567
-            $table->float('berat');
-            $table->string('bukti_foto')->nullable(); // nama file gambar
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->enum('layanan', ['antar', 'jemput']);
+            $table->string('alamat'); // alamat user dari profile
+            $table->string('lokasi'); // lokasi detail yang diinput
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
+            $table->float('berat'); // dalam gram
+            $table->date('tanggal');
+            $table->integer('estimasi_koin');
+            $table->string('bukti_foto')->nullable(); // path file foto
+            $table->enum('status', ['pending', 'processing', 'completed', 'cancelled'])->default('pending');
+            $table->string('lokasi_antar')->nullable(); // khusus untuk tipe antar
             $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('transaksis');
     }

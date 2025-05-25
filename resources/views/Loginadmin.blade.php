@@ -66,6 +66,14 @@
                 <h4 class="mt-2">LOG IN ADMIN</h4>
                 <small>Masuk sebagai Admin</small>
             </div>
+
+            {{-- Tampilkan pesan error jika login gagal --}}
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    {{ $errors->first() }}
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('admin.login') }}">
                 @csrf
                 <div class="mb-3">

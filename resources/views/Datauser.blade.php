@@ -134,18 +134,6 @@
 </head>
 
 <body>
-    <!-- Header -->
-    <div class="header d-flex justify-content-between align-items-center">
-        <div>
-            <a href="Kontakkami" class="text-white text-decoration-none me-3">call center</a>
-            <a href="Kontakkami" class="text-white text-decoration-none">kontak kami</a>
-        </div>
-        <div>
-            <a href="Notifikasi" class="text-white text-decoration-none me-3">Notifikasi</a>
-            <a href="Bantuan" class="text-white text-decoration-none me-3">Bantuan</a>
-            <a href="#" class="text-white text-decoration-none">Bahasa Indonesia</a>
-        </div>
-    </div>
 
     <!-- Logo & Search -->
     <div class="logo-section d-flex justify-content-between align-items-center">
@@ -170,10 +158,11 @@
                 </div>
 
                 <nav class="nav flex-column">
-                    <a class="nav-link" href="Dashboardadmin">Dashboard</a>
-                    <a class="nav-link" href="Fakturtransaksi">Faktur Transaksi</a>
-                    <a class="nav-link" href="Riwayattransaksiadmin">Riwayat Transaksi</a>
-                    <a class="nav-link active" href="Datauser">Kelola User</a>
+                    <a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a>
+                    <a class="nav-link" href="{{ route('admin.transaksi.index') }}">Faktur Transaksi</a>
+                    <a class="nav-link" href="{{ route('admin.transaksi.riwayat') }}">Riwayat Transaksi</a>
+                    <a class="nav-link active" href="{{ route('admin.kelolauser') }}">Kelola User</a>
+
                 </nav>
             </div>
 
@@ -216,29 +205,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {{-- Contoh Data Statis --}}
-                            <tr>
-                                <td>1</td>
-                                <td>Gilang Aji</td>
-                                <td>Jl Soekarno Hatta, bandar lampung</td>
-                                <td><a href="#" class="btn btn-dark btn-sm">Lihat</a></td>
-                                <td><span class="btn btn-dark btn-sm disabled">100</span></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Satria</td>
-                                <td>Jl seopomo pl 16, bandar lampung</td>
-                                <td><a href="#" class="btn btn-dark btn-sm">Lihat</a></td>
-                                <td><span class="btn btn-dark btn-sm disabled">68</span></td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Cindi</td>
-                                <td>Jl martanom dalam no III, bandar lampung</td>
-                                <td><a href="#" class="btn btn-dark btn-sm">Lihat</a></td>
-                                <td><span class="btn btn-dark btn-sm disabled">30</span></td>
-                            </tr>
+                            @foreach ($users as $index => $user)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $user->name }}</td>
+                                    <td>{{ $user->alamat ?? '-' }}</td>
+                                    <td><a href="#" class="btn btn-dark btn-sm">Lihat</a></td>
+                                    <td><span class="btn btn-dark btn-sm disabled">{{ $user->coin ?? 0 }}</span></td>
+                                </tr>
+                            @endforeach
                         </tbody>
+
                     </table>
                 </div>
             </div>

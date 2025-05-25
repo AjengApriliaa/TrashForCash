@@ -134,19 +134,6 @@
 </head>
 
 <body>
-    <!-- Header -->
-    <div class="header d-flex justify-content-between align-items-center">
-        <div>
-            <a href="Kontakkami" class="text-white text-decoration-none me-3">call center</a>
-            <a href="Kontakkami" class="text-white text-decoration-none">kontak kami</a>
-        </div>
-        <div>
-            <a href="Notifikasi" class="text-white text-decoration-none me-3">Notifikasi</a>
-            <a href="Bantuan" class="text-white text-decoration-none me-3">Bantuan</a>
-            <a href="#" class="text-white text-decoration-none">Bahasa Indonesia</a>
-        </div>
-    </div>
-
     <!-- Logo & Search -->
     <div class="logo-section d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
@@ -170,10 +157,11 @@
                 </div>
 
                 <nav class="nav flex-column">
-                    <a class="nav-link" href="Dashboardadmin">Dashboard</a>
-                    <a class="nav-link active" href="Fakturtransaksi">Faktur Transaksi</a>
-                    <a class="nav-link" href="Riwayattransaksiadmin">Riwayat Transaksi</a>
-                    <a class="nav-link" href="#">Kelola User</a>
+                    <a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a>
+                    <a class="nav-link active" href="{{ route('admin.transaksi.index') }}">Faktur Transaksi</a>
+                    <a class="nav-link" href="{{ route('admin.transaksi.riwayat') }}">Riwayat Transaksi</a>
+                    <a class="nav-link" href="{{ route('admin.kelolauser') }}">Kelola User</a>
+
                 </nav>
             </div>
             <!-- Main Content -->
@@ -213,28 +201,38 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @php
-                                $dummyData = [
-                                    ['nama' => 'Bimo Hoshendra', 'alamat' => 'Jl gunung muria desa jatrejo'],
-                                    ['nama' => 'Ahmad', 'alamat' => 'Jl Soepomo no 16 Jakarta'],
-                                    ['nama' => 'Farida', 'alamat' => 'Jl Mataram dalam no 11 Jakarta'],
-                                ];
-                            @endphp
-
-                            @foreach ($dummyData as $index => $data)
+                            @foreach ($transaksis as $index => $data)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $data['nama'] }}</td>
-                                    <td>{{ $data['alamat'] }}</td>
-                                    <td><a href="#" class="btn btn-dark btn-sm">Unduh</a></td>
-                                    <td><a href="#" class="btn btn-dark btn-sm">Verifikasi</a></td>
+                                    <td>{{ $data->user->name ?? 'Tidak Diketahui' }}</td>
+                                    <td>{{ $data->alamat }}</td>
+                                    <td>
+                                        @if ($data->bukti_foto)
+                                            <a href="{{ asset('storage/' . $data->bukti_foto) }}" class="btn btn-dark btn-sm"
+                                                target="_blank">Unduh</a>
+                                        @else
+                                            <span class="text-muted">Tidak ada</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($data->status === 'pending')
+                                            <form action="{{ route('admin.transaksi.verifikasi', $data->id) }}" method="POST"
+                                                onsubmit="return confirm('Verifikasi transaksi ini?')">
+                                                @csrf
+                                                <button type="submit" class="btn btn-dark btn-sm">Verifikasi</button>
+                                            </form>
+                                        @elseif ($data->status === 'completed')
+                                            <span class="badge bg-success">Terverifikasi</span>
+                                        @elseif ($data->status === 'cancelled')
+                                            <span class="badge bg-danger">Dibatalkan</span>
+                                        @else
+                                            <span class="badge bg-secondary">Status Tidak Dikenal</span>
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
-
-                    <!-- Pagination -->
-                    {{-- {{ $transaksis->links() }} --}}
                 </div>
             </div>
         </div>

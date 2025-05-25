@@ -1,135 +1,105 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\WithdrawController;
+use App\Http\Controllers\RiwayatController;
+use App\Http\Controllers\TransaksiController;
+use App\Http\Controllers\AdminLoginController;
+use App\Http\Controllers\AdminTransaksiController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+// =====================
+// Public Pages (Tanpa Login)
+// =====================
+Route::get('/', fn() => view('Home'));
+Route::get('/Login', fn() => view('Login'));
+Route::get('/Signup', fn() => view('Signup'));
 
-Route::get('/', function () {
-    return view('Home'); 
+// =====================
+// Halaman Utama User (Setelah Login)
+// =====================
+Route::get('/dashboard', fn() => view('Dashboard'))->middleware('auth')->name('dashboard');
+
+Route::get('/Buangsampah', [TransaksiController::class, 'formAntar'])->name('buang.sampah');
+Route::get('/Jemput', [TransaksiController::class, 'formJemput'])->name('jemput.sampah');
+Route::get('/Bantuan', fn() => view('Bantuan'))->name('bantuan');
+Route::get('/Kontakkami', fn() => view('Kontakkami'))->name('kontak');
+Route::get('/Koin', fn() => view('Koin'))->name('koin');
+
+// =====================
+// Transaksi User
+// =====================
+Route::prefix('transaksi')->group(function () {
+    Route::get('/', [TransaksiController::class, 'index'])->name('transaksi.index');
+    Route::post('/store', [TransaksiController::class, 'store'])->name('transaksi.store');
+    Route::patch('/{id}/cancel', [TransaksiController::class, 'cancel'])->name('transaksi.cancel');
+    Route::patch('/{id}/status', [TransaksiController::class, 'updateStatus'])->name('transaksi.updateStatus');
 });
 
-Route::get('Login', function () {
-    return view('Login'); 
-});
-Route::get('Signup', function () {
-    return view('Signup'); 
-});
-Route::get('Dashboard', function () {
-    return view('Dashboard'); 
-});
-Route::get('Buangsampah', function () {
-    return view('Buangsampah'); 
-});
-Route::get('Jemput', function () {
-    return view('Jemput'); 
-}); 
-Route::get('Bantuan', function () {
-    return view('Bantuan'); 
-}); 
-Route::get('Kontakkami', function () {
-    return view('Kontakkami'); 
-}); 
-Route::get('Koin', function () {
-    return view('Koin'); 
-}); 
-Route::get('Riwayattransaksi', function () {
-    return view('Riwayattransaksi'); 
-}); 
-Route::get('Riwayatpenukaran', function () {
-    return view('Riwayatpenukaran'); 
-}); 
-Route::get('Withdraw', function () {
-    return view('Withdraw'); 
-}); 
-Route::get('Transaksi', function () {
-    return view('Transaksi'); 
-}); 
-Route::get('Loginadmin', function () {
-    return view('Loginadmin'); 
-}); 
-Route::get('Dashboardadmin', function () {
-    return view('Dashboardadmin'); 
-}); 
-Route::get('Fakturtransaksi', function () {
-    return view('Fakturtransaksi'); 
-}); 
-Route::get('Riwayattransaksiadmin', function () {
-    return view('Riwayattransaksiadmin'); 
-}); 
-Route::get('Datauser', function () {
-    return view('Datauser'); 
-}); 
+Route::get('/Transaksi', [TransaksiController::class, 'index'])->name('transaksi.list');
+Route::get('/Riwayattransaksi', [TransaksiController::class, 'riwayat'])->name('riwayat.transaksi');
 
-use App\Http\Controllers\AuthController;
+// =====================
+// Riwayat Penukaran & Withdraw
+// =====================
+Route::get('/Riwayatpenukaran', [RiwayatController::class, 'riwayatPenukaran'])->name('riwayat.penukaran');
+Route::get('/Withdraw', [WithdrawController::class, 'index'])->name('withdraw.index');
+Route::post('/Withdraw', [WithdrawController::class, 'send'])->name('withdraw.send');
 
+// =====================
+// Auth User
+// =====================
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [LoginController::class, 'customLogin'])->name('login.custom');
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-
-use App\Http\Controllers\Auth\LoginController;
-
-Route::post('/login', [LoginController::class, 'customLogin'])->name('login.custom');
-Route::get('/dashboard', function () {
-    return view('Dashboard');
-})->middleware('auth')->name('dashboard');
-
-use App\Http\Controllers\ProfileController;
-
-Route::middleware(['auth'])->group(function () {
+// =====================
+// Profile User
+// =====================
+Route::middleware('auth')->group(function () {
     Route::get('/Edit', [ProfileController::class, 'edit'])->name('user.profile');
     Route::post('/Edit', [ProfileController::class, 'update'])->name('user.profile.update');
+
+    Route::get('/profile', [UserController::class, 'profile'])->name('user.profile.view');
+    Route::post('/profile/update', [UserController::class, 'update'])->name('user.profile.update2');
 });
 
-use App\Http\Controllers\UserController;
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
-    Route::post('/profile/update', action: [UserController::class, 'update'])->name('user.profile.update');
-});
-
-use App\Http\Controllers\WithdrawController;
-
-Route::get('/withdraw', [WithdrawController::class, 'index'])->name('withdraw.index');
-Route::post('/withdraw', [WithdrawController::class, 'send'])->name('withdraw.send');
-
-use App\Http\Controllers\RiwayatController;
-
-Route::get('/Riwayatpenukaran', [RiwayatController::class, 'riwayatPenukaran'])->name('riwayat.penukaran');
-
-
-
-use App\Http\Controllers\TransaksiController;
-
-Route::middleware(['auth'])->group(function () {
-    // Rute yang sudah ada
-    Route::get('/Transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
-    Route::post('/Transaksi', [TransaksiController::class, 'simpan'])->name('transaksi.simpan');
-    Route::put('/Transaksi/{id}/cancel', [TransaksiController::class, 'cancel'])->name('transaksi.cancel');
-    // Rute yang mungkin perlu ditambahkan
-    Route::get('/buang-sampah', [TransaksiController::class, 'formAntar'])->name('buang.sampah');
-    Route::get('/jemput-sampah', [TransaksiController::class, 'formJemput'])->name('jemput.sampah');
-    Route::get('/transaksi/riwayat', [TransaksiController::class, 'riwayat'])->name('transaksi.riwayat');
-});
-
-use App\Http\Controllers\AdminLoginController;
-
-Route::get('/admin/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login.form');
+// =====================
+// Admin Login
+// =====================
+Route::get('/admin/login', [AdminLoginController::class, 'loginForm'])->name('admin.login.form');
 Route::post('/admin/login', [AdminLoginController::class, 'login'])->name('admin.login');
+Route::post('/admin/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
+
+// =====================
+// Admin Area (Protected by auth:admin)
+// =====================
+Route::prefix('admin')->middleware('auth:admin')->group(function () {
+
+    // Transaksi
+    Route::get('/faktur-transaksi', [AdminTransaksiController::class, 'index'])->name('admin.transaksi.index');
+    Route::post('/transaksi/{id}/verifikasi', [AdminTransaksiController::class, 'verifikasi'])->name('admin.transaksi.verifikasi');
+    Route::get('/riwayat-transaksi', [AdminTransaksiController::class, 'riwayat'])->name('admin.transaksi.riwayat');
+
+    // Kelola User
+    Route::get('/kelola-user', [AdminTransaksiController::class, 'kelolaUser'])->name('admin.kelolauser');
+});
+
+
+Route::middleware(['auth:admin'])->group(function () {
+    Route::get('/admin/dashboardadmin', [DashboardController::class, 'index'])->name('admin.dashboard');
+});
