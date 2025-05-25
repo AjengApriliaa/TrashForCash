@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard - TrashForCash</title>
+    <title>Detail user - TrashForCash</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Leaflet, Axios -->
@@ -146,69 +146,68 @@
         </form>
     </div>
 
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-3 sidebar">
-                <div class="profile">
-                    <h5>{{ Auth::check() ? Auth::user()->name : 'Admin' }}</h5>
+    <div class="container py-5">
+        <h4 class="mb-4">Data Diri</h4>
+
+        <div class="border rounded p-4" style="background-color: #f4fff0;">
+            <h5 class="mb-3 fw-bold">Profil</h5>
+            <p class="bg-success text-white p-2 rounded">
+                Kelola informasi profil Anda untuk mengontrol, melindungi dan mengamankan akun
+            </p>
+
+            <form action="{{ route('admin.user.update', $user->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+
+                <div class="mb-3">
+                    <label class="form-label">Nama Panjang</label>
+                    <input type="text" name="name" value="{{ old('name', $user->name) }}" class="form-control" required>
                 </div>
 
-                <nav class="nav flex-column">
-                    <a class="nav-link active" href="{{ route('admin.dashboard') }}">Dashboard</a>
-                    <a class="nav-link" href="{{ route('admin.transaksi.index') }}">Faktur Transaksi</a>
-                    <a class="nav-link" href="{{ route('admin.transaksi.riwayat') }}">Riwayat Transaksi</a>
-                    <a class="nav-link" href="{{ route('admin.kelolauser') }}">Kelola User</a>
-
-                </nav>
-            </div>
-
-            <!-- Main Content -->
-            <div class="col-md-9 main-content">
-                <h2 class="text-center mt4 ">Dashboard</h2>
-
-                <div class="about">
-                    <div class="card-container">
-                        <div class="card">
-                            <p>Jumlah Pengguna Keseluruhan</p>
-                            <h3>{{ $jumlahPengguna }}</h3>
-                        </div>
-                        <div class="card">
-                            <p>Pengguna Aktif</p>
-                            <h3>{{ $jumlahPenggunaAktif }}</h3>
-                        </div>
-                        <div class="card">
-                            <p>Riwayat Transaksi</p>
-                            <h3>{{ $jumlahTransaksi }}</h3>
-                        </div>
-                    </div>
-
-
-
-                    <div class="about">
-                        <h3 class="text-center">Tentang Aplikasi</h3>
-                        <p>
-                            Trash Forcash adalah platform yang bertujuan untuk membantu Anda mengelola sampah dengan
-                            cara
-                            yang lebih berkelanjutan dan menguntungkan. Dengan Trash Forcash, Anda dapat dengan mudah
-                            mendaur ulang sampah Anda tanpa ribet. Kami menyediakan fasilitas untuk memasukkan jenis dan
-                            berat sampah Anda, dan dalam sekejap, Anda akan mendapatkan insentif berupa koin yang dapat
-                            ditukar dengan hadiah atau uang tunai.
-
-                            Kami percaya bahwa berkontribusi pada lingkungan yang lebih baik haruslah menjadi pengalaman
-                            yang mudah dan bermanfaat bagi semua orang. Dengan Trash Forcash, Anda tidak hanya membantu
-                            mengurangi limbah yang mencemari lingkungan, tetapi juga memiliki kesempatan untuk
-                            mendapatkan
-                            manfaat dari upaya Anda.
-
-                            Bergabunglah dengan komunitas Trash Forcash sekarang dan mari bersama-sama menjadikan dunia
-                            lebih bersih, lebih hijau, dan lebih berkelanjutan.
-                        </p>
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" value="{{ old('email', $user->email) }}" class="form-control"
+                        required>
                 </div>
-            </div>
 
-            @include('Footer')
+                <div class="mb-3">
+                    <label class="form-label">Alamat</label>
+                    <input type="text" name="alamat" value="{{ old('alamat', $user->alamat) }}" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Nomor Telepon</label>
+                    <input type="text" name="telepon" value="{{ old('telepon', $user->telepon) }}" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Jenis Kelamin</label><br>
+                    <input type="radio" name="gender" value="Laki-laki" {{ $user->gender === 'Laki-laki' ? 'checked' : '' }}> Laki-laki
+                    <input type="radio" name="gender" value="Perempuan" {{ $user->gender === 'Perempuan' ? 'checked' : '' }}> Perempuan
+                    <input type="radio" name="gender" value="Lainnya" {{ $user->gender === 'Lainnya' ? 'checked' : '' }}>
+                    Lainnya
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Tanggal Lahir</label>
+                    <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', $user->tanggal_lahir) }}"
+                        class="form-control">
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+            </form>
+
+            <form action="{{ route('admin.user.destroy', $user->id) }}" method="POST"
+                onsubmit="return confirm('Yakin ingin menghapus user ini?')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger">Hapus</button>
+            </form>
+        </div>
+    </div>
+    </div>
+    @include('Footer')
 </body>
 
 </html>

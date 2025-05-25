@@ -151,10 +151,7 @@
             <!-- Sidebar -->
             <div class="col-md-3 sidebar">
                 <div class="profile">
-                    <img src="{{ asset('asset/admin-profile.png') }}" alt="Foto Admin">
                     <h5>{{ Auth::check() ? Auth::user()->name : 'Admin' }}</h5>
-                    <a href="{{ route('user.profile') }}" class="text-decoration-none text-success small">Ubah
-                        profil</a>
                 </div>
 
                 <nav class="nav flex-column">
@@ -210,7 +207,8 @@
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $user->name }}</td>
                                     <td>{{ $user->alamat ?? '-' }}</td>
-                                    <td><a href="#" class="btn btn-dark btn-sm">Lihat</a></td>
+                                    <td><a href="{{ route('admin.user.show', $user->id) }}"
+                                            class="btn btn-dark btn-sm">Lihat</a></td>
                                     <td><span class="btn btn-dark btn-sm disabled">{{ $user->coin ?? 0 }}</span></td>
                                 </tr>
                             @endforeach

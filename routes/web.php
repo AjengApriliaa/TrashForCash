@@ -11,6 +11,8 @@ use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\AdminLoginController;
 use App\Http\Controllers\AdminTransaksiController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\StrukTransaksiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -103,3 +105,11 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
 Route::middleware(['auth:admin'])->group(function () {
     Route::get('/admin/dashboardadmin', [DashboardController::class, 'index'])->name('admin.dashboard');
 });
+
+Route::prefix('admin')->middleware('auth')->group(function () {
+    Route::get('/user/{id}', [AdminUserController::class, 'show'])->name('admin.user.show');
+    Route::put('/user/{id}', [AdminUserController::class, 'update'])->name('admin.user.update');
+    Route::delete('/user/{id}', [AdminUserController::class, 'destroy'])->name('admin.user.destroy');
+});
+
+Route::get('/admin/transaksi/struk/{id}', [StrukTransaksiController::class, 'show'])->name('admin.transaksi.struk');

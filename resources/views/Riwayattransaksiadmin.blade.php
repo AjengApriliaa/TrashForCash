@@ -151,10 +151,7 @@
             <!-- Sidebar -->
             <div class="col-md-3 sidebar">
                 <div class="profile">
-                    <img src="{{ asset('asset/admin-profile.png') }}" alt="Foto Admin">
                     <h5>{{ Auth::check() ? Auth::user()->name : 'Admin' }}</h5>
-                    <a href="{{ route('user.profile') }}" class="text-decoration-none text-success small">Ubah
-                        profil</a>
                 </div>
 
                 <nav class="nav flex-column">
@@ -206,12 +203,8 @@
                                     <td>{{ $data->user->name ?? 'Tidak Diketahui' }}</td>
                                     <td>{{ $data->alamat }}</td>
                                     <td>
-                                        @if ($data->bukti_foto)
-                                            <a href="{{ asset('storage/' . $data->bukti_foto) }}" class="btn btn-dark btn-sm"
-                                                target="_blank">Unduh</a>
-                                        @else
-                                            <span class="text-muted">Tidak ada</span>
-                                        @endif
+                                        <a href="{{ route('admin.transaksi.struk', $data->id) }}"
+                                            class="btn btn-success btn-sm" target="_blank">Lihat</a>
                                     </td>
                                     <td>
                                         @if ($data->status === 'pending')
