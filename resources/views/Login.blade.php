@@ -84,13 +84,7 @@
                         tunggal untuk mengakses semua layanan dengan satu akun.</small>
                 </div>
 
-                <div class="auth-options d-flex justify-content-center mb-3 gap-3">
-                    <button class="btn btn-outline-secondary" title="Google"><i class="bi bi-google"></i></button>
-                    <button class="btn btn-outline-secondary" title="Telepon"><i class="bi bi-telephone"></i></button>
-                </div>
-
                 <div class="text-center text-muted mb-3">
-                    <hr class="w-25 d-inline-block"> <small>Atau lanjutkan dengan</small>
                     <hr class="w-25 d-inline-block">
                 </div>
 
